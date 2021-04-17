@@ -2,26 +2,34 @@ package itis.socialtest;
 
 import itis.socialtest.entities.Post;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AnalyticsServiceImpl implements AnalyticsService {
     @Override
     public List<Post> findPostsByDate(List<Post> posts, String date) {
-        return null;
+        return posts.stream()
+                .filter(post -> post.getDate().contains(date))
+                .collect(Collectors.toList());
+
     }
 
     @Override
     public String findMostPopularAuthorNickname(List<Post> posts) {
-        return null;
+        Map<String,Long> part1 = posts.stream().collect(Collectors.toMap(post -> post.getAuthor().getNickname(), Post::getLikesCount));
+        return part1.entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey();
     }
 
     @Override
     public Boolean checkPostsThatContainsSearchString(List<Post> posts, String searchString) {
-        return null;
+        return posts.stream()
+                .allMatch(post -> post.getContent().equals(searchString));
     }
 
     @Override
     public List<Post> findAllPostsByAuthorNickname(List<Post> posts, String nick){
-        return null;
+        return posts.stream().filter(post -> post.getAuthor().getNickname().equals(nick)).collect(Collectors.toList());
     }
 }
